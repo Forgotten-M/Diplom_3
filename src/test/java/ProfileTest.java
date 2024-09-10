@@ -2,6 +2,7 @@
 import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
 import org.junit.Test;
+import static constants.Url.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -27,9 +28,9 @@ public class ProfileTest extends BaseTest {
         userPage.clickExit();
         loginPage.waitLoadHeader();
 
-        String expectedUrl = "https://stellarburgers.nomoreparties.site/login";
+        String expectedUrl = BASE_URI + LOGIN_URL;
 
-        assertEquals(expectedUrl, webDriver.getCurrentUrl());
+        assertEquals(expectedUrl, driver.getCurrentUrl());
     }
 
     @Step("Авторизация")

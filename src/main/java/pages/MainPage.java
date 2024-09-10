@@ -3,9 +3,8 @@ package pages;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import constants.SectionName;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.time.Duration;
 
@@ -17,6 +16,12 @@ public class MainPage {
     public final By sectionSauce = By.xpath(".//*[text()='Соусы']//parent::div");
     public final By sectionFilling = By.xpath(".//*[text()='Начинки']//parent::div");
     public final By sectionBun = By.xpath(".//*[text()='Булки']//parent::div");
+    private final By sectionSauceActive = By.xpath(".//*[text()='Соусы']//parent::div" +
+            "[contains(@class, 'tab_tab_type_current__2BEPc')]");
+    private final By sectionFillingActive = By.xpath(".//*[text()='Начинки']//parent::div" +
+            "[contains(@class, 'tab_tab_type_current__2BEPc')]");
+    private final By sectionBunActive = By.xpath(".//*[text()='Булки']//parent::div" +
+            "[contains(@class, 'tab_tab_type_current__2BEPc')]");
 
     public MainPage(WebDriver driver) {
         this.driver = driver;
@@ -39,55 +44,46 @@ public class MainPage {
         driver.findElement(personalAccount).click();
     }
 
-    @Step("Клик по кнопке 'Соусы' на главной странице")
-    public void clickSauce() {
-        waitLoadHeader();
-        driver.findElement(sectionSauce).click();
+    @Step("Клик по кнопке 'Булки' на главной странице")
+    public MainPage clickBun() {
+        driver.findElement(sectionBun).click();
+        return new MainPage(driver);
     }
 
-    @Step("Клик по кнопке 'Булки' на главной странице")
-    public void clickBun() {
-        waitLoadHeader();
-        clickSauce();
-        driver.findElement(sectionBun).click();
+    @Step("Клик по кнопке 'Соусы' на главной странице")
+    public MainPage clickSauce() {
+        driver.findElement(sectionSauce).click();
+        return new MainPage(driver);
     }
+
 
     @Step("Клик по кнопке 'Начинки' на главной странице")
-    public void clickFilling() {
-        waitLoadHeader();
+    public MainPage clickFilling() {
         driver.findElement(sectionFilling).click();
+        return new MainPage(driver);
     }
 
-    @Step("Клик по одной из секции 'Соусы' 'Булки' 'Начинки' на главной странице ")
-    public void clickSection(SectionName sectionName) {
-        switch (sectionName) {
-            case BUN:
-                clickBun();
-                break;
-            case SAUCE:
-                clickSauce();
-                break;
-            case FILLING:
-                clickFilling();
-                break;
-        }
+
+    @Step("Проверка, что секция 'Соусы' активна")
+    public boolean isSectionSauceActive() {
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(sectionSauceActive));
+        return driver.findElement(sectionSauceActive).isDisplayed();
     }
 
-    public WebElement getSection(SectionName sectionName) {
-        switch (sectionName) {
-            case BUN:
-                return driver.findElement(sectionBun);
-            case SAUCE:
-                return driver.findElement(sectionSauce);
-            case FILLING:
-                return driver.findElement(sectionFilling);
-            default:
-                throw new RuntimeException("Некорректное название элемента");
-        }
+
+    @Step("Проверка, что секция 'Начинки' активна")
+    public boolean isSectionFillingActive() {
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(sectionFillingActive));
+        return driver.findElement(sectionFillingActive).isDisplayed();
     }
 
-    public String getClassName(SectionName sectionName) {
-        return getSection(sectionName).getText();
+    @Step("Проверка, что секция 'Булки' активна")
+    public boolean isSectionBunActive() {
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(sectionBunActive));
+        return driver.findElement(sectionBunActive).isDisplayed();
     }
 
 }

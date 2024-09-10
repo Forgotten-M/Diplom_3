@@ -1,47 +1,45 @@
 package steps;
 
 import io.qameta.allure.Step;
-import io.restassured.response.Response;
+import io.restassured.http.ContentType;
+import io.restassured.response.ValidatableResponse;
 import static constants.Url.*;
 import static io.restassured.RestAssured.given;
 import model.User;
 
 public class UserSteps {
 
-    @Step("Регистрация пользователя")
-    public static Response createUser(User user) {
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
+    @Step("Создание уникального пользователя")
+    public ValidatableResponse createUser(User user){
+        return given()
+                .contentType(ContentType.JSON)
+                .baseUri(BASE_URI)
                 .body(user)
                 .when()
-                .post(BASE_URI +CREATE_USER_ENDPOINT);
-        return response;
+                .post(CREATE_USER_ENDPOINT)
+                .then();
     }
 
-    @Step("Вход пользователем")
-    public static Response loginUser(User user) {
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
+    @Step("Логин юзера в системе")
+    public ValidatableResponse loginUser(User user){
+        return given()
+                .contentType(ContentType.JSON)
+                .baseUri(BASE_URI)
                 .body(user)
                 .when()
-                .post(BASE_URI +USER_ENDPOINT);
-        return response;
+                .post(LOGIN_ENDPOINT)
+                .then();
     }
 
-    @Step("Получение accessToken пользователя")
-    public static String getAccessToken(User user) {
-        return loginUser(user).then().extract().path("accessToken");
-    }
-
-    @Step("Удаление пользователя")
-    public static void deleteUser(String accessToken) {
-        if (accessToken != null)
-            given()
-                    .header("Authorization", accessToken)
-                    .when()
-                    .delete(BASE_URI +USER_ENDPOINT);
+    @Step("Удаление юзера")
+    public ValidatableResponse deleteUser(String accessToken){
+        return given()
+                .baseUri(BASE_URI)
+                .header("Authorization", accessToken)
+                .contentType(ContentType.JSON)
+                .when()
+                .delete(USER_ENDPOINT)
+                .then();
     }
 
 }

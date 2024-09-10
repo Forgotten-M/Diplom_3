@@ -3,6 +3,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import constants.LoginButtons;
+import static constants.Url.*;
 
 import static org.junit.Assert.assertEquals;
 import static constants.LoginButtons.*;
@@ -37,9 +38,9 @@ public class LoginUserTest extends BaseTest {
 
         mainPage.waitLoadHeader();
 
-        String actual = webDriver.getCurrentUrl();
+        String actual = driver.getCurrentUrl();
 
-        assertEquals("https://stellarburgers.nomoreparties.site/", actual);
+        assertEquals(BASE_URI, actual);
 
     }
 }

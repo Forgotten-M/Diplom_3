@@ -3,6 +3,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import constants.ConstructorButtons;
+import static constants.Url.*;
 
 import static org.junit.Assert.assertEquals;
 import static constants.ConstructorButtons.CONSTRUCTOR;
@@ -32,9 +33,9 @@ public class GoFromProfileTest extends BaseTest {
         userPage.waitLoadingPage();
         userPage.changeButton(buttonName);
 
-        String expectedUrl = "https://stellarburgers.nomoreparties.site/";
+        String expectedUrl = BASE_URI;
 
-        assertEquals(expectedUrl, webDriver.getCurrentUrl());
+        assertEquals(expectedUrl, driver.getCurrentUrl());
     }
 
 

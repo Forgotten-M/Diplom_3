@@ -13,7 +13,7 @@ import static io.restassured.RestAssured.given;
 import static constants.Url.*;
 
 public class BaseTest {
-    protected WebDriver webDriver;
+    protected WebDriver driver;
     protected User user;
     protected final RandomUser randomUser = new RandomUser();
     protected RegisterPage registerPage;
@@ -25,13 +25,13 @@ public class BaseTest {
 
     @Before
     public void setUp() {
-        webDriver = webDriverFactory.getWebDriver();
-        webDriver.get("https://stellarburgers.nomoreparties.site");
-        registerPage = new RegisterPage(webDriver);
-        loginPage = new LoginPage(webDriver);
-        mainPage = new MainPage(webDriver);
-        userPage = new UserPage(webDriver);
-        recoveryPasswordPage = new RecoveryPasswordPage(webDriver);
+        driver = webDriverFactory.getWebDriver();
+       driver.get(BASE_URI);
+        registerPage = new RegisterPage(driver);
+        loginPage = new LoginPage(driver);
+        mainPage = new MainPage(driver);
+        userPage = new UserPage(driver);
+        recoveryPasswordPage = new RecoveryPasswordPage(driver);
         createUser();
     }
 
@@ -40,25 +40,25 @@ public class BaseTest {
     public void deleteUserAndCloseBrowser() {
         System.out.println("Пользователь " + user.getName() + " Был удален");
         deleteUser();
-        webDriver.quit();
+        driver.quit();
     }
 
     private void createUser() {
         user = randomUser.getUser();
         given().contentType(ContentType.JSON)
                 .body(user)
-                .post(BASE_URI + "/api/auth/register");
+                .post(BASE_URI + CREATE_USER_ENDPOINT);
     }
 
     private void deleteUser() {
         String accessToken = given()
                 .contentType(ContentType.JSON)
                 .body(user)
-                .post(BASE_URI + "/api/auth/login")
+                .post(BASE_URI + LOGIN_ENDPOINT)
                 .body().path("accessToken");
         given().contentType(ContentType.JSON)
                 .header("Authorization", accessToken)
-                .body(user).delete(BASE_URI + "/api/auth/user");
+                .body(user).delete(BASE_URI + USER_ENDPOINT);
     }
 
     public void selectButton(LoginButtons loginButtons) {

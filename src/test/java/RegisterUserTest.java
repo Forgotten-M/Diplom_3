@@ -1,3 +1,4 @@
+
 import io.qameta.allure.junit4.DisplayName;
 import org.junit.After;
 import org.junit.Before;
@@ -7,6 +8,7 @@ import model.User;
 import pages.MainPage;
 import pages.LoginPage;
 import pages.RegisterPage;
+import steps.UserSteps;
 import utils.RandomUser;
 import utils.WebDriverFactory;
 
@@ -17,7 +19,7 @@ public class RegisterUserTest {
     private WebDriver webDriver;
     public WebDriverFactory webDriverFactory = new WebDriverFactory();
     private String actual;
-    private final String expected = BASE_URI + LOGIN_ENDPOINT;
+    private final String expected = BASE_URI + LOGIN_URL;
     protected RegisterPage registerPage;
     protected LoginPage loginPage;
     protected MainPage mainPage;
@@ -27,11 +29,13 @@ public class RegisterUserTest {
     @Before
     public void setUp() {
         webDriver = webDriverFactory.getWebDriver();
-        webDriver.get("https://stellarburgers.nomoreparties.site/register");
+        webDriver.get(BASE_URI + REGISTER_URL);
         user = randomUser.getUser();
         registerPage = new RegisterPage(webDriver);
         loginPage = new LoginPage(webDriver);
         mainPage = new MainPage(webDriver);
+
+
     }
 
     @Test
@@ -61,11 +65,23 @@ public class RegisterUserTest {
         System.out.println(actual);
 
         assertEquals("Некорректный пароль", actual);
+
     }
 
+
     @After
-    @DisplayName("Выход из браузера")
-    public void CloseBrowser() {
+    @DisplayName("Закрытие браузера и удаление юзера")
+    public void deleteUserAndCloseBrowser() {
+        String response = new UserSteps()
+                .loginUser(user)
+                .extract().body()
+                .path("accessToken");
+        if (response != null){
+            new UserSteps().deleteUser(response);
+        }
+        System.out.println("Пользователь " + user.getName() + " Был удален");
         webDriver.quit();
     }
+
+
 }
